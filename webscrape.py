@@ -17,27 +17,39 @@ driver.get(url)
 
 time.sleep(3)
 
-car_elements = driver.find_elements(By.CSS_SELECTOR, '.offer-item')[:20]
+car_elements = driver.find_elements(By.CSS_SELECTOR, '.offer-item')
 print(f"Found {len(car_elements)} car elements")
 
 car_data_list = []
 
-for car_element in car_elements:
+for car_element in car_elements[:19]:
     try:
         primary_action = car_element.find_element(By.CSS_SELECTOR, '.mdc-card__primary-action')
         d_grid = primary_action.find_element(By.CSS_SELECTOR, '.d-grid.no-decoration')
 
-        # Extract the car title from the correct h5 element
         car_title = d_grid.find_element(By.CSS_SELECTOR, '.card__primary .card__title.mdc-typography--headline5').text
-        print("Car title element found:", car_title)
-
-        # Extract the car price from the correct h6 element
         car_price = d_grid.find_element(By.CSS_SELECTOR, '.card__primary .card__title.price').text
-        print("Car price element found:", car_price)
-
-        # Extract the vendor information from the correct div element
         vendor_info = primary_action.find_element(By.CSS_SELECTOR, '.card__footer').text
-        print("Vendor information found:", vendor_info)
+        description = primary_action.find_element(By.CSS_SELECTOR, '.card__secondary.mdc-typography--body2').text
 
-        # Extract the description from the correct div element
-     
+        car_data = {
+            'Title': car_title,
+            'Price': car_price,
+            'Vendor': vendor_info,
+            'Description': description
+        }
+
+        car_data_list.append(car_data)
+    except Exception as e:
+        print(f"Error processing car element: {e}")
+
+with open('car_listings.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    fieldnames = ['Title', 'Price', 'Vendor', 'Description']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    
+    writer.writeheader()
+    writer.writerows(car_data_list)
+
+print("Car listings saved to car_listings.csv")
+
+driver.quit()
