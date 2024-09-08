@@ -10,14 +10,14 @@ service = Service('D:/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
 chrome_options = Options()
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
 driver = webdriver.Chrome(service=service, options=chrome_options)
-driver.get('https://www.cars.bg/carslist.php?subm=1&add_search=1&typeoffer=1&fuelId%5B%5D=1&fuelId%5B%5D=3&gearId=1&last=3&priceFrom=2000&priceTo=6000&conditions%5B%5D=4&conditions%5B%5D=1&yearFrom=2000&powerFrom=90&doorId=2&steering_wheel=1')
+driver.get('https://www.cars.bg/carslist.php?subm=1&add_search=1&typeoffer=1&fuelId%5B%5D=1&fuelId%5B%5D=3&gearId=1&priceFrom=2000&priceTo=6000&conditions%5B%5D=4&conditions%5B%5D=1&yearFrom=2000&yearTo=2012&powerFrom=108&powerTo=252&doorId=2&e%5B%5D=9&e%5B%5D=26&steering_wheel=1')
 
 time.sleep(0.5)
 
 # Open CSV file and write header
 with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
-    writer.writerow(['Title', 'Price', 'Vendor', 'Description'])
+    writer.writerow(['Title', 'Price', 'Year, Fuel Type, Mileage', 'Vendor', 'Description', 'Link'])
 
     # Set to track unique car titles
     unique_titles = set()
@@ -25,7 +25,7 @@ with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
     previous_height = driver.execute_script("return document.body.scrollHeight")
     while True:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-        time.sleep(0.5)
+        time.sleep(0.2)
         new_height = driver.execute_script("return document.body.scrollHeight")
 
         offer_items = driver.find_elements(By.CSS_SELECTOR, '.offer-item')
@@ -39,11 +39,16 @@ with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
                 vendor_info = primary_action.find_element(By.CSS_SELECTOR, '.card__footer').text
                 description = primary_action.find_element(By.CSS_SELECTOR, '.card__secondary.mdc-typography--body2').text
 
-                # Check for duplicates using both title and vendor
+                # Extract the entire row's text for year, fuel type, and mileage
+                details = primary_action.find_element(By.CSS_SELECTOR, '.card__secondary.mdc-typography--body1.black').text
+
+                # Extract the link
+                car_link = d_grid.get_attribute('href')
+
                 unique_identifier = (car_title, vendor_info)
                 if unique_identifier not in unique_titles:
                     unique_titles.add(unique_identifier)
-                    writer.writerow([car_title, car_price, vendor_info, description])
+                    writer.writerow([car_title, car_price, details, vendor_info, description, car_link])
             except Exception as e:
                 print(f"Error extracting data: {e}")
 
