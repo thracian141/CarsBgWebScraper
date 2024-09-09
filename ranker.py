@@ -75,14 +75,25 @@ def volume_points(volume):
         return 0
     
 def hp_points(hp):
-    if hp < 85:
-        return 0 
-    elif 85 <= hp <= 135:
-        return 10 * (hp - 85) / (135 - 85) 
-    elif 135 < hp <= 300:
-        return 10 * (300 - hp) / (300 - 135)  
-    else:
-        return 0 
+    match hp:
+        case 'N/A':
+            return 0
+        case _ if hp < 90:
+            return 0
+        case _ if hp >= 90 and hp < 100 :
+            return 2
+        case _ if hp >= 100 and hp < 120:
+            return 6
+        case _ if hp >= 120 and hp < 140:
+            return 8
+        case _ if hp >= 140 and hp < 160:
+            return 10
+        case _ if hp >= 160 and hp < 180:
+            return 8
+        case _ if hp >= 180 and hp < 200:
+            return 6
+        case _ if hp >= 200:
+            return 0
   
 def brand_points(brand):
     if 'volkswagen' in brand:
@@ -171,11 +182,56 @@ def fuel_type_points(fuel_type):
         return 5
     else:
         return 0
+    
+def shape_points(shape):
+    match shape:
+        case 'Седан':
+            return 10
+        case 'Хечбек':
+            return 8
+        case 'Комби':
+            return 6
+        case 'Купе':
+            return 4
+        case 'Кабрио':
+            return 2
+        case 'Джип':
+            return 0
+        case 'Миниван':
+            return 0
+        case 'Пикап':
+            return 0
+        case 'Ван':
+            return 0
+        case 'Друг':
+            return 0
+        case 'N/A':
+            return 0
+        case _:
+            return 0
+        
+def euro_mark_points(euro_mark):
+    match euro_mark:
+        case 'Евро 6':
+            return 10
+        case 'Евро 5':
+            return 10
+        case 'Евро 4':
+            return 9
+        case 'Евро 3':
+            return 5.5
+        case 'Евро 2':
+            return 3
+        case 'Евро 1':
+            return 0
+        case 'N/A':
+            return 0
+        case _:
+            return 0
 
 def calculate_points(car):
     points = 0
     
-    # Extract and format the values before passing them to the respective functions
     try:
         price = float(re.sub(r'[^\d.]', '', car['Price']))
     except (ValueError, KeyError):
@@ -211,25 +267,6 @@ def calculate_points(car):
         points -= 3
     
     return round(points, 2)
-
-# Define a custom BMW car dictionary
-custom_car = {
-    'Title': 'BMW',
-    'Price': '5,000 EUR',
-    'City': 'София',
-    'Engine Volume': '2.0',
-    'Mileage': '150000 км.',
-    'Year of Manufacture': '2015',
-    'Fuel Type': 'Бензин',
-    'Vendor': 'частно лице',
-    'Link': 'https://www.cars.bg/offer/66db38487017b7d9ed017bd2'
-}
-
-# Calculate points for the custom car
-custom_car_points = calculate_points(custom_car)
-
-# Print the result
-print(f"Custom BMW car points: {custom_car_points}")
 
 # Read the CSV file and rank the cars
 with open('separated_info.csv', mode='r', encoding='utf-8') as infile:
