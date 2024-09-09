@@ -5,7 +5,6 @@ import time
 from selenium.webdriver.common.by import By
 import csv
 
-# Initialize the WebDriver
 service = Service('D:/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
 chrome_options = Options()
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
@@ -14,12 +13,10 @@ driver.get('https://www.cars.bg/carslist.php?subm=1&add_search=1&typeoffer=1&fue
 
 time.sleep(0.5)
 
-# Open CSV file and write header
 with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     writer.writerow(['Title', 'Price', 'Year, Fuel Type, Mileage', 'Vendor', 'Description', 'Link'])
 
-    # Set to track unique car titles
     unique_titles = set()
 
     previous_height = driver.execute_script("return document.body.scrollHeight")
@@ -39,10 +36,8 @@ with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
                 vendor_info = primary_action.find_element(By.CSS_SELECTOR, '.card__footer').text
                 description = primary_action.find_element(By.CSS_SELECTOR, '.card__secondary.mdc-typography--body2').text
 
-                # Extract the entire row's text for year, fuel type, and mileage
                 details = primary_action.find_element(By.CSS_SELECTOR, '.card__secondary.mdc-typography--body1.black').text
 
-                # Extract the link
                 car_link = d_grid.get_attribute('href')
 
                 unique_identifier = (car_title, vendor_info)
