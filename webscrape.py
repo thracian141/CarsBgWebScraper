@@ -6,9 +6,10 @@ from selenium.webdriver.common.by import By
 import csv
 
 # Initialize the WebDriver
-service = Service('D:/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
+service = Service('C:/Users/Bojo/Desktop/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
 chrome_options = Options()
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+chrome_options.add_argument("--headless")
 driver = webdriver.Chrome(service=service, options=chrome_options)
 driver.get('https://www.cars.bg/carslist.php?subm=1&add_search=1&typeoffer=1&fuelId%5B%5D=1&fuelId%5B%5D=3&gearId=1&priceFrom=2000&priceTo=6000&conditions%5B%5D=4&conditions%5B%5D=1&yearFrom=2000&yearTo=2012&powerFrom=108&powerTo=252&doorId=2&e%5B%5D=9&e%5B%5D=26&steering_wheel=1')
 
