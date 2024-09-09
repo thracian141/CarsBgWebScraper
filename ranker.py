@@ -1,17 +1,31 @@
 import csv
 import re
+import argparse
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Rank car listings')
+    parser.add_argument('--opt_price', type=float, help='Optimal price for full points (default: 3000)')
+    return parser.parse_args()
+
+args = parse_arguments()
+
+if args.opt_price is None:
+    while True:
+        try:
+            args.opt_price = float(input("Enter the optimal price for full points (default 3000): ") or 3000)
+            break
+        except ValueError:
+            print("Please enter a valid number.")
 
 # Define the functions for each criterion
-def price_points(price):
+def price_points(price, opt_price):
     match price:
-        case _ if price == 0:
-            return 0
-        case _ if price < 2000:
-            return 10  
-        case _ if 2000 <= price <= 3000:
-            return 10 + 10 * (price - 2000) / (3000 - 2000) 
-        case _ if 3000 < price <= 6000:
-            return 20 * (6000 - price) / (6000 - 3000)  
+        case _ if price == 2000:
+            return 10
+        case _ if 2000 <= price <= opt_price:
+            return 10 + 10 * (price - 2000) / (opt_price - 2000) 
+        case _ if opt_price < price <= 6000:
+            return 20 * (6000 - price) / (6000 - opt_price)  
         case _:
             return 0  
 
@@ -189,7 +203,7 @@ def calculate_points(car):
         price = float(re.sub(r'[^\d.]', '', car['Price']))
     except (ValueError, KeyError):
         price = 0
-    points += price_points(price)
+    points += price_points(price, args.opt_price)
     
     points += city_points(car.get('City', ''))
     

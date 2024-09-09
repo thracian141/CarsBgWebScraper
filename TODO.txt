@@ -1,3 +1,2 @@
-custom params on launching ranker.py - ability to use last used params
+ability to use last used params
 open every page and load more info into the csv
-replace if else with match case
