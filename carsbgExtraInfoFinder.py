@@ -6,7 +6,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 
-service = Service('D:/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
+service = Service('./chromedriver-win64/chromedriver.exe')
 chrome_options = Options()
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
 chrome_options.add_argument("--headless")

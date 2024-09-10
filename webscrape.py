@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 import csv
 
 # Initialize the WebDriver
-service = Service('D:/CarsBgWebScraper/chromedriver-win64/chromedriver.exe')
+service = Service('./chromedriver-win64/chromedriver.exe')
 chrome_options = Options()
 chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
 chrome_options.add_argument("--headless")
