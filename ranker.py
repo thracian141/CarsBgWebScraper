@@ -106,6 +106,8 @@ def price_points(price, opt_price):
             return 0  
 
 def city_points(city):
+    if city == 'N/A' or city not in G:
+        return 0
     distance = nx.shortest_path_length(G, source=default_city, target=city, weight='weight')
     return max(0, 12 - distance)
    
@@ -267,7 +269,7 @@ def euro_mark_points(euro_mark):
         case 'N/A':
             return 0
         case _:
-                return 0
+            return 0
 
 def calculate_points(car):
     points = 0
