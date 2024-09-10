@@ -3,6 +3,81 @@ import re
 import argparse
 import networkx as nx
 
+G = nx.Graph()
+G.add_node('Пловдив')
+G.add_node('Пазарджик')
+G.add_node('Асеновград')
+G.add_node('Хасково')
+G.add_node('Кърджали')
+G.add_node('Смолян')
+G.add_node('Стара Загора')
+G.add_node('Ямбол')
+G.add_node('Кърджали')
+G.add_node('Казанлък')
+G.add_node('Сливен')
+G.add_node('Бургас')
+G.add_node('Варна')
+G.add_node('Добрич')
+G.add_node('Габрово')
+G.add_node('Силистра')
+G.add_node('Русе')
+G.add_node('Разград')
+G.add_node('Шумен')
+G.add_node('Търговище')
+G.add_node('Пазарджик')
+G.add_node('Велико Търново')
+G.add_node('Габрово')
+G.add_node('Ловеч')
+G.add_node('Плевен')
+G.add_node('Враца')
+G.add_node('Монтана')
+G.add_node('Видин')
+G.add_node('Перник')
+G.add_node('Кюстендил')
+G.add_node('Благоевград')
+G.add_node('София')
+
+G.add_edge('Пловдив', 'Асеновград', weight=1)
+G.add_edge('Асеновград', 'Кърджали', weight=2)
+G.add_edge('Кърджали', 'Смолян', weight=1)
+G.add_edge('Асеновград', 'Хасково', weight=1)
+G.add_edge('Асеновград', 'Стара Загора', weight=1)
+G.add_edge('Стара Загора', 'Ямбол', weight=2)
+G.add_edge('Ямбол', 'Сливен', weight=1)
+G.add_edge('Сливен', 'Бургас', weight=2)
+G.add_edge('Бургас', 'Варна', weight=2)
+G.add_edge('Варна', 'Добрич', weight=1)
+G.add_edge('Добрич', 'Силистра', weight=1)
+G.add_edge('Силистра', 'Русе', weight=2)
+G.add_edge('Русе', 'Разград', weight=1)
+G.add_edge('Русе', 'Плевен', weight=2)
+G.add_edge('Русе', 'Велико Търново', weight=2)
+G.add_edge('Разград', 'Шумен', weight=1)
+G.add_edge('Шумен', 'Търговище', weight=1)
+G.add_edge('Шумен', 'Добрич', weight=2)
+G.add_edge('Търговище', 'Разград', weight=1)
+G.add_edge('Търговище', 'Велико Търново', weight=2)
+G.add_edge('Велико Търново', 'Габрово', weight=1)
+G.add_edge('Русе', 'Плевен', weight=2)
+G.add_edge('Габрово', 'Плевен', weight=2)
+G.add_edge('Габрово', 'Ловеч', weight=2)
+G.add_edge('Габрово', 'Стара Загора', weight=4)
+G.add_edge('Ловеч', 'Плевен', weight=1)
+G.add_edge('Плевен', 'Враца', weight=2)
+G.add_edge('Враца', 'Монтана', weight=1)
+G.add_edge('Враца', 'София', weight=1)
+G.add_edge('Монтана', 'Видин', weight=1)
+G.add_edge('Видин', 'Перник', weight=3)
+G.add_edge('Перник', 'Благоевград', weight=1)
+G.add_edge('София', 'Благоевград', weight=1)
+G.add_edge('София', 'Перник', weight=1)
+G.add_edge('Благоевград', 'Кюстендил', weight=1)
+G.add_edge('Перник', 'Кюстендил', weight=1)
+G.add_edge('София', 'Пазарджик', weight=2)
+G.add_edge('Пазарджик', 'Пловдив', weight=1)
+
+default_city = 'Пловдив'
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Rank car listings')
     parser.add_argument('--opt_price', type=float, help='Optimal price for full points (default: 3000)')
@@ -31,132 +106,9 @@ def price_points(price, opt_price):
             return 0  
 
 def city_points(city):
-    G = nx.diGraph()
-    G.add_node('Пловдив')
-    G.add_node('Пазарджик')
-    G.add_node('Асеновград')
-    G.add_node('Хасково')
-    G.add_node('Кърджали')
-    G.add_node('Смолян')
-    G.add_node('Стара Загора')
-    G.add_node('Ямбол')
-    G.add_node('Кърджали')
-    G.add_node('Казанлък')
-    G.add_node('Сливен')
-    G.add_node('Бургас')
-    G.add_node('Варна')
-    G.add_node('Добрич')
-    G.add_node('Габрово')
-    G.add_node('Силистра')
-    G.add_node('Русе')
-    G.add_node('Разград')
-    G.add_node('Шумен')
-    G.add_node('Търговище')
-    G.add_node('Пазарджик')
-    G.add_node('Велико Търново')
-    G.add_node('Габрово')
-    G.add_node('Ловеч')
-    G.add_node('Плевен')
-    G.add_node('Враца')
-    G.add_node('Монтана')
-    G.add_node('Видин')
-    G.add_node('Перник')
-    G.add_node('Кюстендил')
-    G.add_node('Благоевград')
-    G.add_node('София')
-
-    G.add_edge('Пловдив', 'Асеновград', weight=1)
-    G.add_edge('Асеновград', 'Кърджали', weight=2)
-    G.add_edge('Кърджали', 'Смолян', weight=1)
-    G.add_edge('Асеновград', 'Хасково', weight=1)
-    G.add_edge('Асеновград', 'Стара Загора', weight=1)
-    G.add_edge('Стара Загора', 'Ямбол', weight=2)
-    G.add_edge('Ямбол', 'Сливен', weight=1)
-    G.add_edge('Сливен', 'Бургас', weight=2)
-    G.add_edge('Бургас', 'Варна', weight=2)
-    G.add_edge('Варна', 'Добрич', weight=1)
-    G.add_edge('Добрич', 'Силистра', weight=1)
-    G.add_edge('Силистра', 'Русе', weight=2)
-    G.add_edge('Русе', 'Разград', weight=1)
-    G.add_edge('Русе', 'Плевен', weight=2)
-    G.add_edge('Русе', 'Велико Търново', weight=2)
-    G.add_edge('Разград', 'Шумен', weight=1)
-    G.add_edge('Шумен', 'Търговище', weight=1)
-    G.add_edge('Шумен', 'Добрич', weight=2)
-    G.add_edge('Търговище', 'Разград', weight=1)
-    G.add_edge('Търговище', 'Велико Търново', weight=2)
-    G.add_edge('Велико Търново', 'Габрово', weight=1)
-    G.add_edge('Русе', 'Плевен', weight=2)
-    G.add_edge('Габрово', 'Плевен', weight=2)
-    G.add_edge('Габрово', 'Ловеч', weight=2)
-    G.add_edge('Габрово', 'Стара Загора', weight=4)
-    G.add_edge('Ловеч', 'Плевен', weight=1)
-    G.add_edge('Плевен', 'Враца', weight=2)
-    G.add_edge('Враца', 'Монтана', weight=1)
-    G.add_edge('Враца', 'София', weight=1)
-    G.add_edge('Монтана', 'Видин', weight=1)
-    G.add_edge('Видин', 'Перник', weight=3)
-    G.add_edge('Перник', 'Благоевград', weight=1)
-    G.add_edge('София', 'Благоевград', weight=1)
-    G.add_edge('София', 'Перник', weight=1)
-    G.add_edge('Благоевград', 'Кюстендил', weight=1)
-    G.add_edge('Перник', 'Кюстендил', weight=1)
-    G.add_edge('София', 'Пазарджик', weight=2)
-    G.add_edge('Пазарджик', 'Пловдив', weight=1)
-    
-    distance = nx.shortest_path_length(G, 'A', city, weight='weight')
-    return max(0, 10 - distance)
-    
-    match city:
-        case _ if 'София' in city:
-            return 8
-        case _ if 'Пловдив' in city:
-            return 10
-        case _ if 'Варна' in city:
-            return 6
-        case _ if 'Враца' in city:
-            return 1
-        case _ if 'Бургас' in city:
-            return 7
-        case _ if 'Стара Загора' in city:
-            return 8
-        case _ if 'Монтана' in city:
-            return 0
-        case _ if 'Плевен' in city:
-            return 2
-        case _ if 'Пазарджик' in city:
-            return 9
-        case _ if 'Смолян' in city:
-            return 4
-        case _ if 'Кърджали' in city:
-            return 3
-        case _ if 'Русе' in city:
-            return 2
-        case _ if 'Сливен' in city:
-            return 4
-        case _ if 'Хасково' in city:
-            return 4
-        case _ if 'Ямбол' in city:
-            return 4
-        case _ if 'Велико Търново' in city:
-            return 3
-        case _ if 'Габрово' in city:
-            return 3
-        case _ if 'Добрич' in city:
-            return 1
-        case _ if 'Казанлък' in city:
-            return 5
-        case _ if 'Видин' in city:
-            return 0
-        case _ if 'Кюстендил' in city:
-            return 5
-        case _ if 'Благоевград' in city:
-            return 6
-        case _ if 'Асеновград' in city:
-            return 10
-        case _:
-            return 0
-    
+    distance = nx.shortest_path_length(G, source=default_city, target=city, weight='weight')
+    return max(0, 12 - distance)
+   
 def volume_points(volume):
     match volume:
         case _ if volume < 1.2:
@@ -233,7 +185,6 @@ def brand_points(brand):
             return 6
         case _:
             return 0
-
 
 def mileage_points(mileage):    
     match mileage:
