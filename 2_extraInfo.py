@@ -12,11 +12,11 @@ chrome_options.add_experimental_option("prefs", {"profile.managed_default_conten
 chrome_options.add_argument("--headless")
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
-with open('car_listings.csv', mode='r', encoding='utf-8', newline='') as infile:
+with open('1_listings.csv', mode='r', encoding='utf-8', newline='') as infile:
     reader = csv.DictReader(infile)
     car_listings = list(reader)
 
-with open('fullinfocars.csv', mode='w', newline='', encoding='utf-8') as outfile:
+with open('2_fullinfo.csv', mode='w', newline='', encoding='utf-8') as outfile:
     fieldnames = reader.fieldnames + ['Additional Info']
     writer = csv.DictWriter(outfile, fieldnames=fieldnames)
     writer.writeheader()

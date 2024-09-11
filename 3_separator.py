@@ -10,7 +10,7 @@ shape_pattern = re.compile(r'^[A-Za-zА-Яа-яЁё\s]+$')
 euro_mark_pattern = re.compile(r'^(EURO|euro|Euro)\s?[1-6]$')
 color_pattern = re.compile(r'^[A-Za-zА-Яа-яЁё\s]+$')
 
-with open('fullinfocars.csv', mode='r', encoding='utf-8') as infile, open('separated_info.csv', mode='w', newline='', encoding='utf-8') as outfile:
+with open('2_fullinfo.csv', mode='r', encoding='utf-8') as infile, open('3_separated.csv', mode='w', newline='', encoding='utf-8') as outfile:
     reader = csv.reader(infile)
     writer = csv.writer(outfile)
 

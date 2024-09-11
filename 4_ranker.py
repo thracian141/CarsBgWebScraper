@@ -93,7 +93,6 @@ if args.opt_price is None:
         except ValueError:
             print("Please enter a valid number.")
 
-# Define the functions for each criterion
 def price_points(price, opt_price):
     match price:
         case _ if price == 2000:
@@ -196,12 +195,12 @@ def mileage_points(mileage):
             return 0
         case _ if mileage == '':
             return 0
-        case _ if mileage > 320000:
+        case _ if mileage > 280000:
             return 0
         case _ if mileage < 100000:
             return 10
         case _:
-            return 10 * (320000 - mileage) / (320000 - 100000)
+            return 10 * (280000 - mileage) / (280000 - 100000)
 
 def year_of_manufacture_points(year):
     match year:
@@ -311,7 +310,7 @@ def calculate_points(car):
     return round(points, 2)
 
 # Read the CSV file and rank the cars
-with open('separated_info.csv', mode='r', encoding='utf-8') as infile:
+with open('3_separated.csv', mode='r', encoding='utf-8') as infile:
     reader = csv.DictReader(infile)
     cars = list(reader)
 
@@ -322,7 +321,7 @@ with open('separated_info.csv', mode='r', encoding='utf-8') as infile:
     ranked_cars = sorted(cars, key=lambda x: x['Points'], reverse=True)
 
 # Write the ranked cars to a new CSV file
-with open('ranked_car_listings.csv', mode='w', newline='', encoding='utf-8') as outfile:
+with open('4_ranked.csv', mode='w', newline='', encoding='utf-8') as outfile:
     fieldnames = reader.fieldnames + ['Points']
     writer = csv.DictWriter(outfile, fieldnames=fieldnames)
     writer.writeheader()

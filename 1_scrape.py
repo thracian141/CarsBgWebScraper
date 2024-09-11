@@ -15,7 +15,7 @@ driver.get('https://www.cars.bg/carslist.php?subm=1&add_search=1&typeoffer=1&fue
 
 time.sleep(0.5)
 
-with open('car_listings.csv', mode='w', newline='', encoding='utf-8') as file:
+with open('1_listings.csv', mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     writer.writerow(['Title', 'Price', 'Year, Fuel Type, Mileage', 'Vendor', 'Description', 'Link'])
 
