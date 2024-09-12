@@ -1,6 +1,7 @@
 import csv
 import re
 import argparse
+import string
 import networkx as nx
 
 G = nx.Graph()
@@ -76,11 +77,10 @@ G.add_edge('Перник', 'Кюстендил', weight=1)
 G.add_edge('София', 'Пазарджик', weight=2)
 G.add_edge('Пазарджик', 'Пловдив', weight=1)
 
-default_city = 'Пловдив'
-
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Rank car listings')
-    parser.add_argument('--opt_price', type=float, help='Optimal price for full points (default: 3000)')
+    parser.add_argument('--opt_price', type=float, help='Въведи оптимална цена между 2000-6000лв. (default: 4000)')
+    parser.add_argument('--own_city', type=str, help='Въведи населеното си място (default: Пловдив)')
     return parser.parse_args()
 
 args = parse_arguments()
@@ -88,10 +88,17 @@ args = parse_arguments()
 if args.opt_price is None:
     while True:
         try:
-            args.opt_price = float(input("Enter the optimal price for full points (default 3000): ") or 3000)
+            args.opt_price = float(input("Въведи оптимална цена между 2000-6000лв. (default 4000): ") or 4000)
             break
         except ValueError:
-            print("Please enter a valid number.")
+            print("Невалидно число.")
+if args.own_city is None:
+    while True:
+        args.own_city = input("Въведи населеното си място (default Пловдив): ") or 'Пловдив'
+        if args.own_city in G:
+            break
+        print("Населеното място не е в списъка. Опитай да въведеш административния си център (Пр.: Казанлък -> Стара Загора) ")
+    
 
 def price_points(price, opt_price):
     match price:
@@ -104,22 +111,29 @@ def price_points(price, opt_price):
         case _:
             return 0  
 
-def city_points(city):
+def city_points(city, own_city):
     if city == 'N/A' or city not in G:
         return 0
-    distance = nx.shortest_path_length(G, source=default_city, target=city, weight='weight')
-    return max(0, 12 - distance)
+    try:
+        distance = nx.shortest_path_length(G, source=own_city, target=city, weight='weight')
+        return max(0, 10 - distance)
+    except nx.NetworkXNoPath:
+        return 0
    
 def volume_points(volume):
     match volume:
-        case _ if volume < 1.2:
+        case _ if volume < 1.6:
             return 0
-        case _ if 1.2 <= volume <= 2.0:
-            return 10 * (volume - 1.2) / (2.0 - 1.2) 
-        case _ if 2.0 < volume <= 3.0:
-            return 10 * (3.0 - volume) / (3.0 - 2.0) 
-        case _:
-            return 0
+        case _ if 1.6 <= volume < 1.8:
+            return 1
+        case _ if 1.8 <= volume < 1.9:
+            return 3
+        case _ if 1.9 <= volume < 2.0:
+            return 5
+        case _ if 2.0 <= volume < 2.3:
+            return 10
+        case _ if volume >= 2.3:
+            return 5
     
 def hp_points(hp):
     match hp:   
@@ -169,7 +183,7 @@ def brand_points(brand):
         case _ if 'seat' in brand:
             return 4
         case _ if 'mercedes' in brand:
-            return 2
+            return -6
         case _ if 'bmw' in brand:
             return -10
         case _ if 'volvo' in brand:
@@ -195,21 +209,21 @@ def mileage_points(mileage):
             return 0
         case _ if mileage == '':
             return 0
-        case _ if mileage > 280000:
-            return 0
         case _ if mileage < 100000:
             return 10
-        case _:
-            return 10 * (280000 - mileage) / (280000 - 100000)
+        case _ if 100000 <= mileage <= 200000:
+            return (mileage-100000) / 10000
+        case _ if mileage > 200000:
+            return 0
 
 def year_of_manufacture_points(year):
     match year:
         case _ if year <= 2000:
             return 0
         case _ if year > 2010:
-            return 10
+            return 20
         case _ if year > 2000 and year <= 2010:
-            return year - 2000
+            return (year - 2000) * 2
         case _:
             return 0
 
@@ -227,15 +241,15 @@ def fuel_type_points(fuel_type):
 def shape_points(shape):
     match shape:
         case 'Седан':
-            return 10
+            return 15
         case 'Хечбек':
-            return 8
+            return 10
         case 'Комби':
-            return 6
-        case 'Купе':
-            return 4
-        case 'Кабрио':
             return 2
+        case 'Купе':
+            return 0
+        case 'Кабрио':
+            return 0
         case 'Джип':
             return 0
         case 'Миниван':
@@ -279,7 +293,7 @@ def calculate_points(car):
         price = 0
     points += price_points(price, args.opt_price)
     
-    points += city_points(car.get('City', ''))
+    points += city_points(car.get('City', ''), args.own_city)
     
     try:
         engine_volume = float(car['Engine Volume'].replace(',', '.'))
@@ -289,6 +303,18 @@ def calculate_points(car):
     
     brand = car.get('Title', '').lower()
     points += brand_points(brand)
+
+    shape = car.get('Shape', '')
+    points += shape_points(shape)
+
+    euro_mark = car.get('EuroMark', '')
+    points += euro_mark_points(euro_mark)
+
+    horse_power = car.get('HorsePower', '')
+    try:
+        hp = int(re.sub(r'[^\d]', '', horse_power))
+    except (ValueError, KeyError):
+        hp = 0
     
     try:
         mileage = int(re.sub(r'[^\d]', '', car['Mileage']))

@@ -15,7 +15,7 @@ with open('2_fullinfo.csv', mode='r', encoding='utf-8') as infile, open('3_separ
     writer = csv.writer(outfile)
 
     header = next(reader)
-    writer.writerow([header[0], 'Engine Volume', 'City', 'Year', 'Fuel Type', 'Mileage', 'Price', 'Vendor', 'Description', 'Link', 'Shape', 'HorsePower', 'EuroMark', 'Color'])
+    writer.writerow([header[0], 'Engine Volume', 'City', 'Year', 'Fuel Type', 'Mileage', 'Price', 'Vendor', 'Shape', 'HorsePower', 'EuroMark', 'Color', 'Description', 'Link'])
 
     for row in reader:
         car_title = row[0]
@@ -92,4 +92,4 @@ with open('2_fullinfo.csv', mode='r', encoding='utf-8') as infile, open('3_separ
         year = year if year != 'N/A' else manufacture_date
         engine_volume = engine_volume if engine_volume != 'N/A' else volume
 
-        writer.writerow([car_title, engine_volume, city, year, fuel_type, mileage, price, vendor_info, description, link, shape, horse_power, euro_mark, color])
+        writer.writerow([car_title, engine_volume, city, year, fuel_type, mileage, price, vendor_info, shape, horse_power, euro_mark, color, description, link])
