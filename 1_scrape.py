@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import csv
 import math
 import concurrent.futures
+from webdriver_manager.chrome import ChromeDriverManager
 
 stop_flag = threading.Event()
 
@@ -32,7 +33,7 @@ def scrape_data(price_from, price_to, lock):
     if stop_flag.is_set():
         return
     print(f"Starting scrape for price range {price_from} to {price_to}")
-    service = Service('./chromedriver-win64/chromedriver.exe')
+    service = Service(ChromeDriverManager().install())
     chrome_options = Options()
     chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
     chrome_options.add_argument("--headless")

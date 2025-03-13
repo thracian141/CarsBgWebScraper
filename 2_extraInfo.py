@@ -5,18 +5,19 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import re
 import concurrent.futures
 import threading
 
-def process_chunk(chunk, writer_lock, stop_event):
-    service = Service('./chromedriver-win64/chromedriver.exe')
-    chrome_options = Options()
-    chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
-    chrome_options.add_argument("--headless")
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+service = Service(ChromeDriverManager().install())
+chrome_options = Options()
+chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
+chrome_options.add_argument("--headless")
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
+def process_chunk(chunk, writer_lock, stop_event):
     for car in chunk:
         if stop_event.is_set():
             break
@@ -46,12 +47,6 @@ def process_chunk(chunk, writer_lock, stop_event):
             writer.writerow(car)
 
     driver.quit()
-
-service = Service('./chromedriver-win64/chromedriver.exe')
-chrome_options = Options()
-chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})
-chrome_options.add_argument("--headless")
-driver = webdriver.Chrome(service=service, options=chrome_options)
 
 with open('1_listings.csv', mode='r', encoding='utf-8', newline='') as infile:
     reader = csv.DictReader(infile)
